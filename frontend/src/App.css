@@ -199,14 +199,14 @@
   border: none;
   background: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 40px;
 }
 
 .tabs button.active {
   
-  color: white;
+  /*color: white;*/
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 10px;
   text-decoration-color: rgb(147, 202, 53);
 }
 
@@ -286,4 +286,58 @@
 .interestsNav button{
   padding: 15px;
   cursor: pointer;
+}
+
+.profilePage{
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.profilePicture{
+  font-size: 60px;
+  text-align: left;
+  margin-bottom: 35px;
+}
+
+.profileCard{
+  position: relative;
+  width: 100%;
+  padding: 40px;
+  margin: 0 auto;
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  box-sizing: border-box;
+}
+
+.editProfileButton{
+  padding: 15px 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+}
+
+.profileSection{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.profileTag{
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: rgb(222, 222, 222);
+}
+
+.profilePage h2{
+  text-align: left;
+  font-size: 30px;
+  margin-bottom: 30px;
 }

@@ -149,19 +149,19 @@ function App() {
           className={tab === 'explore' ? 'active' : ''}
           onClick={() => setTab('explore')}
         >
-          Explore
+          👥
         </button>
         <button
           className={tab === 'messages' ? 'active' : ''}
           onClick={() => setTab('messages')}
         >
-          Messages
+          💬
         </button>
         <button
           className={tab === 'profile' ? 'active' : ''}
           onClick={() => setTab('profile')}
         >
-          My Profile
+          👤
         </button>
       </div>
       {tab === 'explore' && <Explore />}
