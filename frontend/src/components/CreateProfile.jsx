@@ -26,6 +26,15 @@ function CreateProfile({ onSave }){
            setSelectedInterests([...selectedInterests, interest]); 
         }
     }
+
+    function saveProfile(){
+        onSave({
+            name: name,
+            age: age,
+            interests: selectedInterests
+        });
+    }
+
     return(
     <div className="createProfile">
     {part == 1 && (
@@ -84,7 +93,7 @@ function CreateProfile({ onSave }){
             <div className="interestsNav">
                 <button onClick={() => setPart(1)}>BACK</button>
                 <button type="button"
-                    onClick={onSave}
+                    onClick={saveProfile}
                     disabled={selectedInterests.length === 0}
                 >SAVE</button>
             </div>
