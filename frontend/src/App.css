@@ -209,3 +209,81 @@
   text-underline-offset: 4px;
   text-decoration-color: rgb(147, 202, 53);
 }
+
+.profileCreationScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileCreationScreen h2{
+  font-size: 50px;
+}
+
+.profileCreationInputs{
+  display: grid;
+  grid-template-columns: 200px 75px;
+  gap: 25px 20px;
+  align-items: center;
+}
+
+.profileCreationInputs input{
+  grid-column: 1;
+  width: 200px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.profileCreationInputs button{
+  grid-column: 2;
+  grid-row: 4;
+  width: 75px;
+  padding: 15px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.interestsScreen{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 40px;
+}
+
+.interestsScreen  h2{
+  font-size: 50px;
+}
+
+.interestsGrid{
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  gap: 20px;
+}
+
+.interest {
+  padding: 15px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}
+
+.interest.selected {
+  background-color: black;
+  color: white;
+}
+
+.interestsNav {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.interestsNav button{
+  padding: 15px;
+  cursor: pointer;
+}

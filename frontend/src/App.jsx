@@ -6,6 +6,7 @@ import './App.css'
 import Profile from './components/Profile'
 import Explore from './components/Explore'
 import Messages from './components/Messages'
+import CreateProfile from './components/CreateProfile';
 
 
 /*
@@ -131,6 +132,11 @@ export default App
 
 function App() {
   const [tab, setTab] = useState('profile')       /* set current state to know which tab we're on */
+
+  const [profileCreated, setProfileCreated] = useState(false);
+  if(!profileCreated){
+    return(<CreateProfile onSave={() => setProfileCreated(true)}/>);
+  }
 
   return (
     <div>
