@@ -3,7 +3,12 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
+import Profile from './components/Profile'
 
+
+/*
+ * This is the basic template when creating a directory I left it in here to reference
+ *
 function App() {
   const [count, setCount] = useState(0)
 
@@ -116,6 +121,18 @@ function App() {
       <div className="ticks"></div>
       <section id="spacer"></section>
     </>
+  )
+}
+
+export default App
+*/
+
+function App() {
+  return (
+    <div>
+      <h1>App Prototype</h1>
+      <Profile />
+    </div>
   )
 }
 
