@@ -134,8 +134,12 @@ function App() {
   const [tab, setTab] = useState('profile')       /* set current state to know which tab we're on */
 
   const [profileCreated, setProfileCreated] = useState(false);
+  const [profile, setProfile] = useState(null);
   if(!profileCreated){
-    return(<CreateProfile onSave={() => setProfileCreated(true)}/>);
+    return(<CreateProfile onSave={(profileData) => {
+      setProfile(profileData);
+      setProfileCreated(true);
+    }}/>);
   }
 
   return (
@@ -145,24 +149,24 @@ function App() {
           className={tab === 'explore' ? 'active' : ''}
           onClick={() => setTab('explore')}
         >
-          Explore
+          👥
         </button>
         <button
           className={tab === 'messages' ? 'active' : ''}
           onClick={() => setTab('messages')}
         >
-          Messages
+          💬
         </button>
         <button
           className={tab === 'profile' ? 'active' : ''}
           onClick={() => setTab('profile')}
         >
-          My Profile
+          👤
         </button>
       </div>
       {tab === 'explore' && <Explore />}
       {tab === 'messages' && <Messages />}
-      {tab === 'profile' && <Profile />}
+      {tab === 'profile' && <Profile profile={profile}/>}
     </div>
   )
 }
