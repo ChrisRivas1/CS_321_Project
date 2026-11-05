@@ -1,9 +1,16 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+//import heroImg from './assets/hero.png'
+//import reactLogo from './assets/react.svg'
+//import viteLogo from './assets/vite.svg'
 import './App.css'
+import Profile from './components/Profile'
+import Explore from './components/Explore'
+import Messages from './components/Messages'
 
+
+/*
+ * This is the basic template when creating a directory I left it in here to reference
+ *
 function App() {
   const [count, setCount] = useState(0)
 
@@ -116,6 +123,41 @@ function App() {
       <div className="ticks"></div>
       <section id="spacer"></section>
     </>
+  )
+}
+
+export default App
+*/
+
+function App() {
+  const [tab, setTab] = useState('profile')       /* set current state to know which tab we're on */
+
+  return (
+    <div>
+      <div className="tabs">
+        <button
+          className={tab === 'explore' ? 'active' : ''}
+          onClick={() => setTab('explore')}
+        >
+          Explore
+        </button>
+        <button
+          className={tab === 'messages' ? 'active' : ''}
+          onClick={() => setTab('messages')}
+        >
+          Messages
+        </button>
+        <button
+          className={tab === 'profile' ? 'active' : ''}
+          onClick={() => setTab('profile')}
+        >
+          My Profile
+        </button>
+      </div>
+      {tab === 'explore' && <Explore />}
+      {tab === 'messages' && <Messages />}
+      {tab === 'profile' && <Profile />}
+    </div>
   )
 }
 
