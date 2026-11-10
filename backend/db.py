@@ -9,16 +9,27 @@ cursor.execute("PRAGMA foreign_keys = ON")
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     userid INTEGER PRIMARY KEY,
-    username TEXT NOT NULL,
-    email TEXT UNIQUE
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL CHECK (age >= 18)
 )
 """)
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS interests (
-    userid INTEGER,
-    interest TEXT NOT NULL,
-    FOREIGN KEY (userid) REFERENCES users(userid)
+    interestid INTEGER PRIMARY KEY,
+    interestname TEXT NOT NULL UNIQUE
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS user_interests(
+    interestid INTEGER NOT NULL,
+    userid INTEGER NOT NULL,
+    PRIMARY KEY (userid, interestid),
+    FOREIGN KEY (userid) REFERENCES users(userid),
+    FOREIGN KEY (interestid) REFERENCES interests(interestid)
 )
 """)
 
@@ -44,5 +55,20 @@ CREATE TABLE IF NOT EXISTS matches (
 )
 """)
 
+interests = [
+        "Tennis", "Basketball", "Film", "Music",
+        "Soccer", "Dance", "Fitness", "Travel", 
+        "Cooking", "Books", "Anime", "Art",
+        "Technology", "Hiking", "Traveling",
+        "Cycling", "Yoga", "Running", "Fishing",
+        "Photography", "Fashion", "Chess", "Gardening",
+        "Bowling"
+    ]
+for i in range(len(interests)):
+    cursor.execute("""
+        INSERT INTO interests (interestid, interestname)
+        VALUES (?, ?)
+    """, (i + 1, interests[i]))
+    
 connection.commit()
 connection.close()

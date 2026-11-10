@@ -7,6 +7,7 @@ function CreateProfile({ onSave }){
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
+    const [email, setEmail] = useState("");
 
     const interests = [
         "Tennis", "Basketball", "Film", "Music",
@@ -29,9 +30,11 @@ function CreateProfile({ onSave }){
 
     function saveProfile(){
         onSave({
+            username: username,
+            email: email,
             name: name,
             age: age,
-            interests: selectedInterests
+            interests: selectedInterests,
         });
     }
 
@@ -46,6 +49,12 @@ function CreateProfile({ onSave }){
                     placeholder="USERNAME"
                     value={username}
                     onChange={(e) =>{setUsername(e.target.value)}}
+                    required
+                />
+                <input type="email"
+                    placeholder="EMAIL"
+                    value={email}
+                    onChange={(e) =>{setEmail(e.target.value)}}
                     required
                 />
                 <input type="password"
