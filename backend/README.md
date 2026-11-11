@@ -7,6 +7,9 @@ SQLite
 Uvicorn
 Pydantic
 
+## FastAPI yt guide
+https://youtu.be/aSdVU9-SxH4?si=Vdr0y8KKHxfHInt5
+
 ## Backend Setup
 1. >> cd backend
 
