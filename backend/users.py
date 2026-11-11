@@ -34,6 +34,37 @@ def select_interests(userid, selectedInterests):
     connection.commit()
     connection.close()
 
+def get_user_info(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT userid, username, email, name, age
+        FROM users
+        WHERE userid = ?
+    """, (userid,))
+    user = cursor.fetchone()
+    if user is None:
+        connection.close()
+        return None
+    cursor.execute("""
+            SELECT i.interestname
+            FROM user_interests ui
+            JOIN interests i
+                ON ui.interestid = i.interestid
+            WHERE ui.userid = ?
+        """, (userid,))
+    interests = [row[0] for row in cursor.fetchall()]
+    connection.close()
+    info = {
+        "userid": user[0],
+        "username": user[1],
+        "email": user[2],
+        "name": user[3],
+        "age": user[4],
+        "interests": interests
+    }
+    return info
+
 if __name__ == "__main__":
     # userid = create_user("chris123", "chris123@email.com", "chris", 21, ["Soccer", "Fitness", "Music"])
     # userid = create_user("chris456", "chris456@email.com", "chris", 21, ["Basketball", "Hiking", "Film"])

@@ -28,14 +28,28 @@ function CreateProfile({ onSave }){
         }
     }
 
-    function saveProfile(){
-        onSave({
-            username: username,
-            email: email,
-            name: name,
-            age: age,
-            interests: selectedInterests,
-        });
+    async function saveProfile() {
+        try{
+            const response = await fetch("http://localhost:8000/users",{
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    name: name,
+                    age: Number(age),
+                    selectedInterests: selectedInterests
+                })
+            });
+            if (!response.ok){
+                throw new Error("Failed to create profile");
+            }
+            const data = await response.json();
+            onSave(data.userid);
+        } catch (error){
+            console.error("Failed to create profile", error);
+            alert("Failed to create profile. Try again");
+        }
     }
 
     return(

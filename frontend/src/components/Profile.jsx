@@ -1,4 +1,27 @@
-function Profile({ profile }){
+import { useState, useEffect } from 'react'
+
+function Profile({ userid }){
+    const [profile, setProfile] = useState(null);
+    useEffect(()=>{
+        async function loadProfile() {
+            try{
+                const response = await fetch(`http://localhost:8000/users/${userid}`);
+                if (!response.ok){
+                    throw new Error("Failed to load profile");
+                }
+                const data = await response.json();
+                setProfile(data);
+            } catch (error){
+                console.error("Failed to load profile", error);
+                alert("Failed to load profile");
+            }
+        }
+        loadProfile();
+    }, [userid]);
+
+    if(!profile){
+        return (<p>loading profile</p>);
+    }
     return(
     <div className="profilePage">
         <div className="profileCard">
