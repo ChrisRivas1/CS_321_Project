@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from users import create_user, get_user_info
+from users import create_user, get_user_info, get_user_id_sign_in
 
 app = FastAPI()
 
@@ -36,6 +36,17 @@ def get_userinfo(userid: int):
     if info is None:
         raise HTTPException(status_code=404, detail="User info not found")
     return info
+
+class SignInUser(BaseModel):
+    input: str
+
+@app.post("/users/signin")
+def signInProfile(user: SignInUser):
+    userid = get_user_id_sign_in(user.input)
+    if userid is None:
+            raise HTTPException(status_code=401, detail="Invalid sign in info")
+    return {"userid": userid}
+
 
 @app.get("/")
 def home():

@@ -65,6 +65,23 @@ def get_user_info(userid):
     }
     return info
 
+def get_user_id_sign_in(input: str):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT userid
+        FROM users
+        WHERE username = ?
+        OR email = ?
+    """, (input, input))
+    user = cursor.fetchone()
+    if user is None:
+        connection.close()
+        return None
+    userid = user[0]
+    connection.close()
+    return userid
+
 if __name__ == "__main__":
     # userid = create_user("chris123", "chris123@email.com", "chris", 21, ["Soccer", "Fitness", "Music"])
     # userid = create_user("chris456", "chris456@email.com", "chris", 21, ["Basketball", "Hiking", "Film"])

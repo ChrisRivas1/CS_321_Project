@@ -6,7 +6,8 @@ import './App.css'
 import Profile from './components/Profile'
 import Explore from './components/Explore'
 import Messages from './components/Messages'
-import CreateProfile from './components/CreateProfile';
+//import CreateProfile from './components/CreateProfile';
+import SignIn from './components/SignIn';
 
 
 /*
@@ -135,7 +136,7 @@ function App() {
 
   const [userid, setUserid] = useState(null);
   if(userid === null){
-    return(<CreateProfile onSave={(newUserid) => {setUserid(newUserid)}}/>);
+    return(<SignIn onSave={(newUserid) => {setUserid(newUserid)}}/>);
   }
 
   return (
