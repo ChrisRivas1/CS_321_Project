@@ -26,6 +26,7 @@ function SignIn({ onSave }){
     return(
     <div className="signIn"> {createProfile === false && (
         <div className="signInScreen">
+            <h2>Sign In</h2>
             <form onSubmit={(e) => {e.preventDefault(); signIn();}}>
                 <div className="signInInputs">
                 <input type="text"
@@ -40,10 +41,11 @@ function SignIn({ onSave }){
                     onChange={(e) =>{setPassword(e.target.value)}}
                     required
                 />
-                <button type="button"
+                <button className="createProfileButton"
+                    type="button"
                     onClick={() => setCreateProfile(true)}
                 >CREATE PROFILE</button>
-                <button type="submit">SIGN IN</button>
+                <button className="signInButton" type="submit">SIGN IN</button>
                 </div>
             </form> 
         </div>

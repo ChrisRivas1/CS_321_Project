@@ -341,3 +341,47 @@
   font-size: 30px;
   margin-bottom: 30px;
 }
+
+.signInScreen{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.signInScreen h2{
+  font-size: 50px;
+  margin-bottom: 40px;
+}
+
+.signInInputs{
+  display: grid;
+  grid-template-columns: 200px 75px;
+  gap: 25px 20px;
+  align-items: center;
+}
+
+.signInInputs input{
+  grid-column: 1;
+  width: 200px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.signInInputs .signInButton{
+  grid-column: 2;
+  grid-row: 2;
+  width: 75px;
+  padding: 15px;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 85px;
+}
+.signInInputs .createProfileButton{
+  grid-column: 1;
+  grid-row: 3;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
