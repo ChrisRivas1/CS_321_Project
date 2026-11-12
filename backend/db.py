@@ -66,9 +66,64 @@ interests = [
     ]
 for i in range(len(interests)):
     cursor.execute("""
-        INSERT INTO interests (interestid, interestname)
+        INSERT OR IGNORE INTO interests (interestid, interestname)
         VALUES (?, ?)
     """, (i + 1, interests[i]))
-    
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS relationships (
+    goalid INTEGER PRIMARY KEY,
+    goalname TEXT NOT NULL UNIQUE
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS user_relationships(
+    goalid INTEGER NOT NULL,
+    userid INTEGER NOT NULL,
+    PRIMARY KEY (userid, goalid),
+    FOREIGN KEY (userid) REFERENCES users(userid),
+    FOREIGN KEY (goalid) REFERENCES relationships(goalid)
+)
+""")
+relationships = [
+        "Friend", "Sports Partner", "Music Partner",
+        "Activity Partner", "Study Partner", "Gaming Partner",
+        "Networking", "Language Exchange Partner"
+    ]
+for i in range(len(relationships)):
+    cursor.execute("""
+        INSERT OR IGNORE INTO relationships (goalid, goalname)
+        VALUES (?, ?)
+    """, (i + 1, relationships[i]))
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS languages (
+    languageid INTEGER PRIMARY KEY,
+    languagename TEXT NOT NULL UNIQUE
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS user_languages(
+    languageid INTEGER NOT NULL,
+    userid INTEGER NOT NULL,
+    PRIMARY KEY (userid, languageid),
+    FOREIGN KEY (userid) REFERENCES users(userid),
+    FOREIGN KEY (languageid) REFERENCES languages(languageid)
+)
+""")
+languages = [
+        "English", "Chinese", "Hindi",
+        "Spanish", "Arabic", "Persian", "French",
+        "Bengali", "Portuguese", "Urdu", "Vietnamese", 
+        "Japanese", "Russian", "German", "Italian"
+    ]
+for i in range(len(languages)):
+    cursor.execute("""
+        INSERT OR IGNORE INTO languages (languageid, languagename)
+        VALUES (?, ?)
+    """, (i + 1, languages[i]))  
+
 connection.commit()
 connection.close()
