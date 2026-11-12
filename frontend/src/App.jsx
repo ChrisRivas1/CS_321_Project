@@ -8,6 +8,7 @@ import Explore from './components/Explore'
 import Messages from './components/Messages'
 //import CreateProfile from './components/CreateProfile';
 import SignIn from './components/SignIn';
+import Events from './components/Events';
 
 
 /*
@@ -136,36 +137,50 @@ function App() {
 
   const [userid, setUserid] = useState(null);
   if(userid === null){
-    return(<SignIn onSave={(newUserid) => {setUserid(newUserid)}}/>);
+    return (<SignIn onSave={(newUserid) => {setUserid(newUserid)}}/>);
   }
 
   return (
-    <div>
-      <div className="tabs">
-        <button
-          className={tab === 'explore' ? 'active' : ''}
-          onClick={() => setTab('explore')}
-        >
-          👥
-        </button>
-        <button
-          className={tab === 'messages' ? 'active' : ''}
-          onClick={() => setTab('messages')}
-        >
-          💬
-        </button>
-        <button
-          className={tab === 'profile' ? 'active' : ''}
-          onClick={() => setTab('profile')}
-        >
-          👤
-        </button>
+    <div className='app'>
+      <div className='appHeader'>
+        <h1>✨ App Name</h1>
       </div>
-      {tab === 'explore' && <Explore />}
-      {tab === 'messages' && <Messages />}
-      {tab === 'profile' && <Profile userid={userid}/>}
+      <div className='appBody'>
+        <div className="tabs">
+          <button
+            className={tab === 'explore' ? 'active' : ''}
+            onClick={() => setTab('explore')}
+          >
+            👥
+          </button>
+          <button
+            className={tab === 'events' ? 'active' : ''}
+            onClick={() => setTab('events')}
+          >
+            🎉
+          </button>
+          <button
+            className={tab === 'messages' ? 'active' : ''}
+            onClick={() => setTab('messages')}
+          >
+            💬
+          </button>
+          <button
+            className={tab === 'profile' ? 'active' : ''}
+            onClick={() => setTab('profile')}
+          >
+            👤
+          </button>
+        </div>
+        <div className='selectedContent'>
+          {tab === 'explore' && <Explore />}
+          {tab === 'events' && <Events />}
+          {tab === 'messages' && <Messages />}
+          {tab === 'profile' && <Profile userid={userid}/>}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
 export default App

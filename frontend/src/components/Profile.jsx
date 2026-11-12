@@ -29,15 +29,22 @@ function Profile({ userid }){
         <div className="profilePicture">👤</div>
         <h2>{profile.name}, {profile.age}</h2>
         <div className="profileSection">
+            <h3>My Bio - </h3>
+            <p>No bio set</p>
+        </div>
+        <div className="profileSection">
             <h3>My Availability - </h3>
-            <span className="profileTag">Mondays</span>
-            <span className="profileTag">Weekends</span>
+            <p>No availability set</p>
         </div>
         <div className="profileSection">
             <h3>My Interests - </h3>
             {profile.interests.map((interest) => (
                 <span className="profileTag" key ={interest}>{interest}</span>
             ))}
+        </div>
+        <div className="profileSection">
+            <h3>My Preferences - </h3>
+            <p>No preferences set</p>
         </div>
         </div>
     </div>);
