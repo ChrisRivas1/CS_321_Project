@@ -26,7 +26,7 @@ def select_interests(userid, selectedInterests):
     cursor = connection.cursor()
     for interest in selectedInterests:
         cursor.execute("""
-            INSERT INTO user_interests (userid, interestid)
+            INSERT OR IGNORE INTO user_interests (userid, interestid)
             SELECT ?, interestid
             FROM interests
             WHERE interestname = ?
@@ -81,6 +81,60 @@ def get_user_id_sign_in(input: str):
     userid = user[0]
     connection.close()
     return userid
+
+def get_user_relationship_preferences(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+            SELECT r.goalname
+            FROM user_relationships ur
+            JOIN relationships r
+                ON ur.goalid = r.goalid
+            WHERE ur.userid = ?
+        """, (userid,))
+    preferences = [row[0] for row in cursor.fetchall()]
+    connection.close()
+    return preferences
+
+def get_user_language_preferences(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+            SELECT l.languagename
+            FROM user_languages ul
+            JOIN languages l
+                ON ul.languageid = l.languageid
+            WHERE ul.userid = ?
+        """, (userid,))
+    preferences = [row[0] for row in cursor.fetchall()]
+    connection.close()
+    return preferences
+
+def select_relationship_preferences(userid, preferences):
+    connection = get_connection()
+    cursor = connection.cursor()
+    for preference in preferences:
+        cursor.execute("""
+            INSERT OR IGNORE INTO user_relationships (userid, goalid)
+            SELECT ?, goalid
+            FROM relationships
+            WHERE goalname = ?
+        """, (userid, preference))
+    connection.commit()
+    connection.close()
+
+def select_language_preferences(userid, preferences):
+    connection = get_connection()
+    cursor = connection.cursor()
+    for preference in preferences:
+        cursor.execute("""
+            INSERT OR IGNORE INTO user_languages (userid, languageid)
+            SELECT ?, languageid
+            FROM languages
+            WHERE languagename = ?
+        """, (userid, preference))
+    connection.commit()
+    connection.close()
 
 if __name__ == "__main__":
     # userid = create_user("chris123", "chris123@email.com", "chris", 21, ["Soccer", "Fitness", "Music"])

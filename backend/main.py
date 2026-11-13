@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from users import create_user, get_user_info, get_user_id_sign_in
+from users import *
 
 app = FastAPI()
 
@@ -47,6 +47,24 @@ def signInProfile(user: SignInUser):
             raise HTTPException(status_code=401, detail="Invalid sign in info")
     return {"userid": userid}
 
+class Preferences(BaseModel):
+    preferences: List[str]
+
+@app.post("/users/{userid}/relationships")
+def add_relationship_preferences(userid: int, preferences: Preferences):
+    select_relationship_preferences(userid, preferences.preferences)
+
+@app.get("/users/{userid}/relationships")
+def get_relationship_preferences(userid: int):
+    return {"preferences": get_user_relationship_preferences(userid)}
+
+@app.post("/users/{userid}/languages")
+def add_language_preferences(userid: int, preferences: Preferences):
+    select_language_preferences(userid, preferences.preferences)
+
+@app.get("/users/{userid}/languages")
+def get_language_preferences(userid: int):
+    return {"preferences": get_user_language_preferences(userid)}
 
 @app.get("/")
 def home():
