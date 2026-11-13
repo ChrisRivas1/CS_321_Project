@@ -290,12 +290,14 @@
 .profilePage{
   padding: 30px;
   box-sizing: border-box;
+  background: #1e2236;
 }
 
 .profilePicture{
-  font-size: 60px;
+  font-size: 80px;
   text-align: left;
   margin-bottom: 35px;
+  padding-bottom: 20px;
 }
 
 .profileCard{
@@ -305,40 +307,70 @@
   margin: 0 auto;
   /* border: 2px solid black;
   border-radius: 10px; */
-  background-color: white;
-  color: black;
   box-sizing: border-box;
 }
 
 .editProfileButton{
-  padding: 15px 20px;
-  border: 1px solid black;
+  font-size: 20px;
+  padding: 25px 35px;
+  border: none;
   border-radius: 5px;
-  background-color: white;
-  color: black;
+  background: #1a1e2f;
   cursor: pointer;
   position: absolute;
   top: 25px;
   right: 25px;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.editProfileButton:hover{
+  background-color: #202438;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
 .profileSection{
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.profileSection h3{
+  font-size: 30px;
+  margin: 0;
+}
+
+.profileSection h4{
+  margin: 0;
+}
+
+.preferencesSection{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .profileTag{
-  padding: 10px 20px;
+  padding: 15px 35px;
   border-radius: 5px;
-  background-color: rgb(222, 222, 222);
+  background-color: #151826;
+}
+
+.tagList{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .profilePage h2{
   text-align: left;
-  font-size: 30px;
+  font-size: 45px;
   margin-bottom: 30px;
+  padding-bottom: 20px;
 }
 
 .signInScreen{
@@ -390,45 +422,75 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 100px;
-  border-bottom: 1px solid black;
+  border: none;
+  background: #1a1e2f;
 }
 
 .appBody{
   display: flex;
-  height: 600px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 .appBody .tabs{
   display: flex;
   flex-direction: column;
   width: 250px;
-  background: white;
-  border-right: 1px solid black;
+  flex-shrink: 0;
+  background: #1a1e2f;
+  border: none;
 }
 
 .appBody .tabs button{
   flex: 1;
   width: 100%;
   padding: 15px;
-  border: 1px solid black;
+  border: none;
   cursor: pointer;
   font-size: 40px;
+  background: #1a1e2f;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.appBody .tabs button:hover{
+  background-color: #202438;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .appBody .tabs button.active{
-  background: rgb(147, 202, 53);
+  background: #252a41;
+}
+
+.appBody .tabs button.active:hover{
+  background-color: #2d3450;
 }
 
 .appBody .selectedContent{
   flex: 1;
   padding: 30px;
+  height: auto;
+  overflow: visible;
+  min-width: 0;
+  background: #1e2236;
+  border-radius: 25px;
 }
 
 .app{
-  width: 95%;
-  margin: 20px;
-  border: 1px solid black;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: #1a1e2f;
+}
+
+body{
+  color: white;
+}
+
+.app * {
+  color: white;
 }
