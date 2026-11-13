@@ -300,13 +300,11 @@
   padding-bottom: 20px;
 }
 
-.profileCard{
+.card{
   position: relative;
   width: 100%;
   padding: 40px;
   margin: 0 auto;
-  /* border: 2px solid black;
-  border-radius: 10px; */
   box-sizing: border-box;
 }
 
@@ -317,11 +315,16 @@
   border-radius: 5px;
   background: #1a1e2f;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profileEditButtons{
   position: absolute;
   top: 25px;
   right: 25px;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20px;
 }
 
 .editProfileButton:hover{
@@ -344,6 +347,7 @@
 }
 
 .profileSection h4{
+  font-size: 22px;
   margin: 0;
 }
 
@@ -357,7 +361,34 @@
 .profileTag{
   padding: 15px 35px;
   border-radius: 5px;
-  background-color: #151826;
+  background-color: #181b2b;
+  border: none;
+  font-size: 20px;
+}
+
+button.profileTag{
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+button.profileTag:hover{
+  background-color: #202438;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+button.profileTag.selected{
+  cursor: pointer;
+  background: #252a41;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+button.profileTag.selected:hover{
+  background-color: #2d3450;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .tagList{
