@@ -136,21 +136,31 @@ def select_language_preferences(userid, preferences):
     connection.commit()
     connection.close()
 
-if __name__ == "__main__":
-    # userid = create_user("chris123", "chris123@email.com", "chris", 21, ["Soccer", "Fitness", "Music"])
-    # userid = create_user("chris456", "chris456@email.com", "chris", 21, ["Basketball", "Hiking", "Film"])
-    # userid = create_user("chris789", "chris789@email.com", "chris", 21, ["Film", "Anime", "Art"])
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("""
-    #     SELECT u.userid, u.username, u.email, u.name, u.age, ui.userid, i.interestid, i.interestname 
-    #     FROM users u
-    #     LEFT JOIN user_interests ui
-    #         ON u.userid = ui.userid
-    #     LEFT JOIN interests i
-    #         ON ui.interestid = i.interestid
-    # """)
-    # print("Users: ", cursor.fetchall())
-    # connection.close()
-    print("")
+def select_availability(userid, slots):
+    connection = get_connection()
+    cursor = connection.cursor()
+    for day, period in slots:
+        cursor.execute("""
+            INSERT OR IGNORE INTO user_availability (userid, slotid)
+            SELECT ?, slotid
+            FROM time_slots
+            WHERE day = ?
+            AND period = ?
+        """, (userid, day, period))
+    connection.commit()
+    connection.close()
 
+def get_user_availability(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT ts.day, ts.period
+        FROM user_availability ua
+        JOIN time_slots ts
+            ON ua.slotid = ts.slotid
+        WHERE ua.userid = ?
+        ORDER BY ts.slotid
+    """, (userid,))
+    availability = [{"day": row[0], "period": row[1]} for row in cursor.fetchall()]
+    connection.close()
+    return availability

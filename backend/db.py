@@ -123,7 +123,42 @@ for i in range(len(languages)):
     cursor.execute("""
         INSERT OR IGNORE INTO languages (languageid, languagename)
         VALUES (?, ?)
-    """, (i + 1, languages[i]))  
+    """, (i + 1, languages[i]))
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS time_slots(
+    slotid INTEGER PRIMARY KEY,
+    day TEXT NOT NULL,
+    period TEXT NOT NULL,
+    UNIQUE (day, period)
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS user_availability(
+    userid INTEGER NOT NULL,
+    slotid INTEGER NOT NULL,
+    PRIMARY KEY (userid, slotid),
+    FOREIGN KEY (userid) REFERENCES users(userid),
+    FOREIGN KEY (slotid) REFERENCES time_slots(slotid)
+)
+""")
+
+days = [
+        "Monday", "Tuesday", "Wednesday","Thursday",
+        "Friday", "Saturday", "Sunday"
+    ]
+
+periods = [
+        "Morning", "Afternoon", "Evening", "Night"
+    ]
+
+for day in days:
+    for period in periods:
+        cursor.execute("""
+            INSERT OR IGNORE INTO time_slots (day, period)
+            VALUES (?, ?)
+        """, (day, period))
 
 connection.commit()
 connection.close()

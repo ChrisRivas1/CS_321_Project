@@ -6,6 +6,7 @@ function Profile({ userid }){
     const [relationships, setRelationships] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [editing, setEditing] = useState(false);
+    const [availability, setAvailability] = useState([]);
     
     async function loadProfile() {
         try{
@@ -32,6 +33,14 @@ function Profile({ userid }){
             }
             const languagesData = await languagesResponse.json();
             setLanguages(languagesData.preferences);
+
+            /**api call for user availability */
+            const availabilityResponse = await fetch(`http://localhost:8000/users/${userid}/availability`);
+            if (!availabilityResponse.ok){
+                throw new Error("Failed to load availability");
+            }
+            const availabilityData = await availabilityResponse.json();
+            setAvailability(availabilityData.availability);
 
         } catch (error){
             console.error("Failed to load profile", error);
@@ -68,7 +77,15 @@ function Profile({ userid }){
         </div>
         <div className="profileSection">
             <h3>My Availability</h3>
-            <p>No availability set</p>
+            <div className='tagList'>
+                {availability.length === 0 ? <p>None Selected</p>: 
+                    availability.map((slot) => (
+                        <span className="profileTag" key ={`${slot.day} ${slot.period}`}>
+                            {slot.day} {slot.period}
+                        </span>
+                    ))
+                }
+            </div>
         </div>
         <div className="profileSection">
             <h3>My Interests</h3>

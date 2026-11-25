@@ -66,6 +66,22 @@ def add_language_preferences(userid: int, preferences: Preferences):
 def get_language_preferences(userid: int):
     return {"preferences": get_user_language_preferences(userid)}
 
+class Timeslot(BaseModel):
+    day: str
+    period: str
+
+class Availability(BaseModel):
+    availability: List[Timeslot]
+
+@app.post("/users/{userid}/availability")
+def set_availability(userid: int, availability: Availability):
+    slots = [(slot.day, slot.period) for slot in availability.availability]
+    select_availability(userid, slots)
+
+@app.get("/users/{userid}/availability")
+def get_availability(userid: int):
+    return {"availability": get_user_availability(userid)}
+
 @app.get("/")
 def home():
     return {"message": "Backend is running"}

@@ -1,13 +1,34 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 function CreateProfile({ onSave }){
     /*part 1 is creation screen
-    part 2 is interests selection screen*/
+    part 2 is availability selection screen
+    part 3 is interests selection screen*/
     const [part, setPart] = useState(1);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [email, setEmail] = useState("");
+
+    const days = [
+        "Monday", "Tuesday", "Wednesday","Thursday",
+        "Friday", "Saturday", "Sunday"
+    ];
+
+    const periods = [
+        "Morning", "Afternoon", "Evening", "Night"
+    ];
+    const [selectedSlots, setSelectedSlots] = useState([]);
+    function toggleSlot(day, period){
+        const slot = `${day} ${period}`;
+        if(selectedSlots.includes(slot)){
+            setSelectedSlots(selectedSlots.filter(item => item !== slot));
+        }
+        else{
+           setSelectedSlots([...selectedSlots, slot]); 
+        }
+    }
+
 
     const interests = [
         "Tennis", "Basketball", "Film", "Music",
@@ -29,6 +50,7 @@ function CreateProfile({ onSave }){
     }
 
     async function saveProfile() {
+        let userid;
         try{
             const response = await fetch("http://localhost:8000/users",{
                 method: "POST",
@@ -45,11 +67,35 @@ function CreateProfile({ onSave }){
                 throw new Error("Failed to create profile");
             }
             const data = await response.json();
-            onSave(data.userid);
+            userid = data.userid;
         } catch (error){
             console.error("Failed to create profile", error);
             alert("Failed to create profile. Try again");
+            return;
         }
+
+        if(selectedSlots.length > 0){
+            try{
+                const availabilityResponse = await fetch(`http://localhost:8000/users/${userid}/availability`,{
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        availability: selectedSlots.map((slot) => {
+                            const [day, period] = slot.split(" ");
+                            return { day: day, period: period };
+                        })
+                    })
+                });
+                if(!availabilityResponse.ok){
+                    throw new Error("Failed to save availability");
+                }
+            } catch (error){
+                console.error("Failed to save availability", error);
+                alert("Profile successfully created. Failed to save availability");
+            }
+        }
+
+        onSave(userid);
     }
 
     return(
@@ -97,6 +143,32 @@ function CreateProfile({ onSave }){
     )}
     {part == 2 && (
         <div className="interestsScreen">
+            <h2>Select Your Availability</h2>
+            <div className="availabilityGrid">
+                {days.map((day) => (
+                    <Fragment key={day}>
+                    <div className="gridLabel">{day}</div>
+                    {periods.map((period) => (
+                        <button type="button"
+                            key={period}
+                            className={
+                                selectedSlots.includes(`${day} ${period}`) ? "interest selected" : "interest"
+                            }
+                            onClick={() => toggleSlot(day, period)}
+                            >{period}
+                        </button>
+                    ))}
+                    </Fragment>
+                ))}
+            </div>
+            <div className="interestsNav">
+                <button type="button" onClick={() => setPart(1)}>BACK</button>
+                <button type="button" onClick={() => setPart(3)}>NEXT</button>
+            </div>
+        </div>
+    )}
+    {part == 3 && (
+        <div className="interestsScreen">
             <h2>Select Your Interests</h2>
             <input type="text"
                 placeholder="Search Interests"
@@ -114,7 +186,7 @@ function CreateProfile({ onSave }){
                 ))}
             </div>
             <div className="interestsNav">
-                <button onClick={() => setPart(1)}>BACK</button>
+                <button onClick={() => setPart(2)}>BACK</button>
                 <button type="button"
                     onClick={saveProfile}
                     disabled={selectedInterests.length === 0}
