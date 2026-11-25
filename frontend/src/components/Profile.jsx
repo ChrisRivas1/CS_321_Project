@@ -63,7 +63,14 @@ function Profile({ userid }){
     }
     return(
     <>
-    {editing ? <EditProfile userid={userid} onSave={save} onCancel={() => setEditing(false)}/> : (
+    {editing ? <EditProfile userid={userid}
+                    currentInterests={profile.interests}
+                    currentRelationships={relationships}
+                    currentLanguages={languages}
+                    currentAvailability={availability}
+                    onSave={save}
+                    onCancel={() => setEditing(false)}
+                /> : (
     <div className="profilePage">
         <div className="card">
         <div className='profileEditButtons'>

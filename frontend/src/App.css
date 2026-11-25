@@ -537,3 +537,18 @@ body{
   text-align: left;
   font-weight: bold;
 }
+
+.editAvailabilityGrid{
+  display: grid;
+  grid-template-columns: 140px repeat(4, max-content);
+  gap: 10px;
+  align-items: center;
+}
+
+.editProfileButton:disabled, .editProfileButton:disabled:hover{
+  background-color: #151826;
+  color: #5c6178;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

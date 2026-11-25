@@ -1,5 +1,26 @@
-import { useState } from "react";
-function EditProfile({ userid, onSave, onCancel }){
+import { useState, Fragment } from "react";
+function EditProfile({ userid, currentInterests, currentRelationships, 
+                    currentLanguages, currentAvailability, onSave, onCancel }){
+
+    const days = [
+        "Monday", "Tuesday", "Wednesday","Thursday",
+        "Friday", "Saturday", "Sunday"
+    ];
+
+    const periods = [
+        "Morning", "Afternoon", "Evening", "Night"
+    ];
+
+    const interests = [
+        "Tennis", "Basketball", "Film", "Music",
+        "Soccer", "Dance", "Fitness", "Travel", 
+        "Cooking", "Books", "Anime", "Art",
+        "Technology", "Hiking", "Traveling",
+        "Cycling", "Yoga", "Running", "Fishing",
+        "Photography", "Fashion", "Chess", "Gardening",
+        "Bowling"
+    ];
+
     const languages = [
         "English", "Chinese", "Hindi",
         "Spanish", "Arabic", "Persian", "French",
@@ -12,57 +33,51 @@ function EditProfile({ userid, onSave, onCancel }){
         "Activity Partner", "Study Partner", "Gaming Partner",
         "Networking", "Language Exchange Partner"
     ];
-    const [selectedRelationships, setselectedRelationships] = useState([]);
-    function toggleRelationships(relationship){
-        if(selectedRelationships.includes(relationship)){
-            setselectedRelationships(selectedRelationships.filter(item => item !== relationship));
+
+    const [selectedSlots, setSelectedSlots] = useState(
+        currentAvailability.map((slot) => `${slot.day} ${slot.period}`)
+    );
+    const [selectedInterests, setSelectedInterests] = useState(currentInterests);
+    const [selectedRelationships, setSelectedRelationships] = useState(currentRelationships);
+    const [selectedLanguages, setSelectedLanguages] = useState(currentLanguages);
+
+    function toggle(list, setList, item){
+        if(list.includes(item)){
+            setList(list.filter(i => i !== item));
         }
         else{
-           setselectedRelationships([...selectedRelationships, relationship]); 
+           setList([...list, item]); 
         }
     }
 
-    const [selectedLanguages, setSelectedLanguages] = useState([]);
-    function toggleLanguages(language){
-        if(selectedLanguages.includes(language)){
-            setSelectedLanguages(selectedLanguages.filter(item => item !== language));
-        }
-        else{
-           setSelectedLanguages([...selectedLanguages, language]); 
+    async function post(path, body){
+        const response = await fetch(`http://localhost:8000/users/${userid}/${path}`,
+        {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        });
+        if(!response.ok){
+            throw new Error(`Failed to save changes to ${path}`);
         }
     }
 
     async function save(){
         try{
-            /**api call for relationships*/
-            const relationshipsResponse = await fetch(`http://localhost:8000/users/${userid}/relationships`,
-                {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        preferences: selectedRelationships
-                    })
-                });
-            if (!relationshipsResponse.ok){
-                throw new Error("Failed to save changes to relationships");
-            }
-
-            /**api call for languages*/
-            const languagesResponse = await fetch(`http://localhost:8000/users/${userid}/languages`,
-                {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        preferences: selectedLanguages
-                    })
-                });
-            if (!languagesResponse.ok){
-                throw new Error("Failed to save changes to languages");
-            }
+            await post("interests", { interests: selectedInterests });
+            await post("relationships", { preferences: selectedRelationships });
+            await post("languages", { preferences: selectedLanguages });
+            await post("availability",
+            {
+                availability: selectedSlots.map((slot) => {
+                    const [day, period] = slot.split(" ");
+                    return { day: day, period: period };
+                })
+            });
             await onSave();
         } catch (error){
             console.error("Failed to save changes", error);
-            alert("Failed to save changes");
+            alert(error.message);
         }
     }
     
@@ -70,9 +85,50 @@ function EditProfile({ userid, onSave, onCancel }){
         <div className="card">
         <div className="profileEditButtons">
             <button className="editProfileButton" onClick={onCancel}>Cancel</button>
-            <button className="editProfileButton" onClick={save}>Save</button>
+            <button className="editProfileButton" 
+                onClick={save}
+                disabled={selectedInterests.length === 0}
+            >Save</button>
         </div>
         <h2>Edit Profile</h2>
+        <div className="profileSection">
+            <h3>My Availability</h3>
+            <div className="editAvailabilityGrid">
+                {days.map((day) => (
+                    <Fragment key={day}>
+                        <h4>{day}</h4>
+                        {periods.map((period) => (
+                            <button type="button"
+                                key={period}
+                                className={
+                                    selectedSlots.includes(`${day} ${period}`) ? "profileTag selected" : "profileTag"
+                                }
+                                onClick={() => toggle(selectedSlots, setSelectedSlots, `${day} ${period}`)}
+                            >{period}
+                            </button>
+                        ))}
+                    </Fragment>
+                ))}
+            </div>
+        </div>
+        <div className="profileSection">
+            <h3>My Interests</h3>
+            <div className="preferencesSection">
+                {selectedInterests.length === 0 && <p>Select at least one interest</p>}
+                <div className="tagList">
+                    {interests.map((interest) => (
+                        <button type="button"
+                            key={interest}
+                            className={
+                                selectedInterests.includes(interest) ? "profileTag selected" : "profileTag"
+                            }
+                            onClick={() => toggle(selectedInterests, setSelectedInterests, interest)}
+                        >{interest}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
         <div className="profileSection">
             <h3>My Preferences</h3>
             <div className="preferencesSection">
@@ -84,7 +140,7 @@ function EditProfile({ userid, onSave, onCancel }){
                             className={
                                 selectedRelationships.includes(relationship) ? "profileTag selected" : "profileTag"
                             }
-                            onClick={() => toggleRelationships(relationship)}
+                            onClick={() => toggle(selectedRelationships, setSelectedRelationships, relationship)}
                         >{relationship}
                         </button>
                     ))}
@@ -99,7 +155,7 @@ function EditProfile({ userid, onSave, onCancel }){
                             className={
                                 selectedLanguages.includes(language) ? "profileTag selected" : "profileTag"
                             }
-                            onClick={() => toggleLanguages(language)}
+                            onClick={() => toggle(selectedLanguages, setSelectedLanguages, language)}
                         >{language}
                         </button>
                     ))}

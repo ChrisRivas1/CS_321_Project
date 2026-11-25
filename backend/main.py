@@ -82,6 +82,15 @@ def set_availability(userid: int, availability: Availability):
 def get_availability(userid: int):
     return {"availability": get_user_availability(userid)}
 
+class Interests(BaseModel):
+    interests: List[str]
+
+@app.post("/users/{userid}/interests")
+def set_interests(userid: int, interests: Interests):
+    if len(interests.interests) == 0:
+        raise HTTPException(status_code=400, detail="Atleast one interest is required")
+    select_interests(userid, interests.interests)
+
 @app.get("/")
 def home():
     return {"message": "Backend is running"}

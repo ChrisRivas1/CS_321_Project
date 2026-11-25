@@ -24,6 +24,7 @@ def create_user(username, email, name, age, selectedInterests):
 def select_interests(userid, selectedInterests):
     connection = get_connection()
     cursor = connection.cursor()
+    cursor.execute("DELETE FROM user_interests WHERE userid = ?", (userid,))
     for interest in selectedInterests:
         cursor.execute("""
             INSERT OR IGNORE INTO user_interests (userid, interestid)
@@ -113,6 +114,7 @@ def get_user_language_preferences(userid):
 def select_relationship_preferences(userid, preferences):
     connection = get_connection()
     cursor = connection.cursor()
+    cursor.execute("DELETE FROM user_relationships WHERE userid = ?", (userid,))
     for preference in preferences:
         cursor.execute("""
             INSERT OR IGNORE INTO user_relationships (userid, goalid)
@@ -126,6 +128,7 @@ def select_relationship_preferences(userid, preferences):
 def select_language_preferences(userid, preferences):
     connection = get_connection()
     cursor = connection.cursor()
+    cursor.execute("DELETE FROM user_languages WHERE userid = ?", (userid,))
     for preference in preferences:
         cursor.execute("""
             INSERT OR IGNORE INTO user_languages (userid, languageid)
@@ -139,6 +142,7 @@ def select_language_preferences(userid, preferences):
 def select_availability(userid, slots):
     connection = get_connection()
     cursor = connection.cursor()
+    cursor.execute("DELETE FROM user_availability WHERE userid = ?", (userid,))
     for day, period in slots:
         cursor.execute("""
             INSERT OR IGNORE INTO user_availability (userid, slotid)
