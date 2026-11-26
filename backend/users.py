@@ -180,3 +180,68 @@ def update_bio(userid, bio):
     """, (bio, userid))
     connection.commit()
     connection.close()
+
+
+''' User Matching Methods '''
+
+
+def get_candidates(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT userid, name, age, bio
+        FROM users
+        WHERE userid != ?
+        AND userid NOT IN (
+            SELECT swipeeid FROM swipes WHERE swiperid = ?
+        )
+        ORDER BY userid
+    """, (userid, userid))
+    rows = cursor.fetchall()
+    candidates = []
+    for row in rows:
+        cursor.execute("""
+            SELECT i.interestname
+            FROM user_interests ui
+            JOIN interests i
+                ON ui.interestid = i.interestid
+            WHERE ui.userid = ?
+        """, (row[0],))
+        interests = [r[0] for r in cursor.fetchall()]
+        candidates.append({
+            "userid": row[0],
+            "name": row[1],
+            "age": row[2],
+            "bio": row[3],
+            "interests": interests
+        })
+    connection.close()
+    return candidates
+
+def record_swipe(swiperid, swipeeid, liked):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        INSERT OR IGNORE INTO swipes (swiperid, swipeeid, liked)
+        VALUES (?, ?, ?)
+    """, (swiperid, swipeeid, 1 if liked else 0))
+    matched = False
+    if liked:
+        cursor.execute("""
+            SELECT 1 FROM swipes
+            WHERE swiperid = ? AND swipeeid = ? AND liked = 1
+        """, (swipeeid, swiperid))
+        if cursor.fetchone():
+            user1id, user2id = sorted((swiperid, swipeeid))
+            cursor.execute("""
+                SELECT 1 FROM matches WHERE user1id = ? AND user2id = ?
+            """, (user1id, user2id))
+            if cursor.fetchone() is None:
+                cursor.execute("""
+                    INSERT INTO matches (user1id, user2id)
+                    VALUES (?, ?)
+                """, (user1id, user2id))
+            matched = True
+    connection.commit()
+    connection.close()
+    return matched

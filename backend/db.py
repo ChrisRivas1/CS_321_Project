@@ -152,6 +152,18 @@ CREATE TABLE IF NOT EXISTS user_availability(
 )
 """)
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS swipes (
+    swipeid INTEGER PRIMARY KEY,
+    swiperid INTEGER NOT NULL,
+    swipeeid INTEGER NOT NULL,
+    liked INTEGER NOT NULL,
+    UNIQUE (swiperid, swipeeid),
+    FOREIGN KEY (swiperid) REFERENCES users(userid),
+    FOREIGN KEY (swipeeid) REFERENCES users(userid)
+)
+""")
+
 days = [
         "Monday", "Tuesday", "Wednesday","Thursday",
         "Friday", "Saturday", "Sunday"

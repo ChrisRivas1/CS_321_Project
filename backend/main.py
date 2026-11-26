@@ -103,6 +103,20 @@ def set_bio(userid: int, bio: Bio):
         raise HTTPException(status_code=422, detail="Bio must be less than 300 characters")
     update_bio(userid, text)
 
+''' User Matching Routing '''
+
+@app.get("/users/{userid}/candidates")
+def read_candidates(userid: int):
+    return {"candidates": get_candidates(userid)}
+
+class Swipe(BaseModel):
+    swipeeid: int
+    liked: bool
+
+@app.post("/users/{userid}/swipes")
+def post_swipe(userid: int, swipe: Swipe):
+    matched = record_swipe(userid, swipe.swipeeid, swipe.liked)
+    return {"matched": matched}
 
 @app.get("/")
 def home():
