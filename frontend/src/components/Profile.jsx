@@ -64,6 +64,7 @@ function Profile({ userid }){
     return(
     <>
     {editing ? <EditProfile userid={userid}
+                    currentBio={profile.bio}
                     currentInterests={profile.interests}
                     currentRelationships={relationships}
                     currentLanguages={languages}
@@ -80,7 +81,7 @@ function Profile({ userid }){
         <h2>{profile.name}, {profile.age}</h2>
         <div className="profileSection">
             <h3>My Bio</h3>
-            <p>No bio set</p>
+            <p className='bioText'>{profile.bio ? profile.bio: "No bio set"}</p>
         </div>
         <div className="profileSection">
             <h3>My Availability</h3>

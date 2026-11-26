@@ -39,7 +39,7 @@ def get_user_info(userid):
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-        SELECT userid, username, email, name, age
+        SELECT userid, username, email, name, age, bio
         FROM users
         WHERE userid = ?
     """, (userid,))
@@ -62,6 +62,7 @@ def get_user_info(userid):
         "email": user[2],
         "name": user[3],
         "age": user[4],
+        "bio": user[5],
         "interests": interests
     }
     return info
@@ -168,3 +169,14 @@ def get_user_availability(userid):
     availability = [{"day": row[0], "period": row[1]} for row in cursor.fetchall()]
     connection.close()
     return availability
+
+def update_bio(userid, bio):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        UPDATE users
+        SET bio = ?
+        WHERE userid = ?
+    """, (bio, userid))
+    connection.commit()
+    connection.close()

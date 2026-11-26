@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from users import *
 
 app = FastAPI()
@@ -90,6 +90,19 @@ def set_interests(userid: int, interests: Interests):
     if len(interests.interests) == 0:
         raise HTTPException(status_code=400, detail="Atleast one interest is required")
     select_interests(userid, interests.interests)
+
+class Bio(BaseModel):
+    bio: Optional[str] = None
+
+@app.post("/users/{userid}/bio")
+def set_bio(userid: int, bio: Bio):
+    text = bio.bio.strip() if bio.bio else None
+    if text == "":
+        text = None
+    if text is not None and len(text) > 300:
+        raise HTTPException(status_code=422, detail="Bio must be less than 300 characters")
+    update_bio(userid, text)
+
 
 @app.get("/")
 def home():

@@ -12,9 +12,17 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    age INTEGER NOT NULL CHECK (age >= 18)
+    age INTEGER NOT NULL CHECK (age >= 18),
+    bio TEXT
 )
 """)
+
+try:
+    cursor.execute("""
+    ALTER TABLE users ADD COLUMN bio TEXT
+    """)
+except sqlite3.OperationalError:
+    pass
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS interests (

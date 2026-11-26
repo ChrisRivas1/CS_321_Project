@@ -1,6 +1,8 @@
 import { useState, Fragment } from "react";
-function EditProfile({ userid, currentInterests, currentRelationships, 
+function EditProfile({ userid, currentBio, currentInterests, currentRelationships, 
                     currentLanguages, currentAvailability, onSave, onCancel }){
+
+    const [bio, setBio] = useState(currentBio ?? "");
 
     const days = [
         "Monday", "Tuesday", "Wednesday","Thursday",
@@ -64,6 +66,7 @@ function EditProfile({ userid, currentInterests, currentRelationships,
 
     async function save(){
         try{
+            await post("bio", {bio: bio });
             await post("interests", { interests: selectedInterests });
             await post("relationships", { preferences: selectedRelationships });
             await post("languages", { preferences: selectedLanguages });
@@ -91,6 +94,16 @@ function EditProfile({ userid, currentInterests, currentRelationships,
             >Save</button>
         </div>
         <h2>Edit Profile</h2>
+        <div className="profileSection">
+            <h3>My Bio</h3>
+            <textarea className="bioInput"
+                placeholder="edit bio place holder"
+                value={bio}
+                maxLength={300}
+                onChange={(e) => setBio(e.target.value)}
+            />
+            <span className="bioLength">{bio.length}/300</span>
+        </div>
         <div className="profileSection">
             <h3>My Availability</h3>
             <div className="editAvailabilityGrid">
