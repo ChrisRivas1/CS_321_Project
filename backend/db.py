@@ -1,6 +1,9 @@
-import sqlite3
 
-connection = sqlite3.connect("matching.db")
+import sqlite3
+from pathlib import Path
+
+db_path = Path(__file__).with_name("matching.db")
+connection = sqlite3.connect(db_path)
 
 cursor = connection.cursor()
 
@@ -13,7 +16,8 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     age INTEGER NOT NULL CHECK (age >= 18),
-    bio TEXT
+    bio TEXT,
+    password_hash TEXT
 )
 """)
 
@@ -23,6 +27,15 @@ try:
     """)
 except sqlite3.OperationalError:
     pass
+
+# Add password storage to existing databases without deleting users.
+cursor.execute("PRAGMA table_info(users)")
+existing_columns = [column[1] for column in cursor.fetchall()]
+
+if "password_hash" not in existing_columns:
+    cursor.execute("""
+    ALTER TABLE users ADD COLUMN password_hash TEXT
+    """)
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS interests (
@@ -52,7 +65,6 @@ CREATE TABLE IF NOT EXISTS availability (
 )
 """)
 
-
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS matches (
     matchid INTEGER PRIMARY KEY,
@@ -65,7 +77,7 @@ CREATE TABLE IF NOT EXISTS matches (
 
 interests = [
         "Tennis", "Basketball", "Film", "Music",
-        "Soccer", "Dance", "Fitness", "Travel", 
+        "Soccer", "Dance", "Fitness", "Travel",
         "Cooking", "Books", "Anime", "Art",
         "Technology", "Hiking", "Traveling",
         "Cycling", "Yoga", "Running", "Fishing",
@@ -124,7 +136,7 @@ CREATE TABLE IF NOT EXISTS user_languages(
 languages = [
         "English", "Chinese", "Hindi",
         "Spanish", "Arabic", "Persian", "French",
-        "Bengali", "Portuguese", "Urdu", "Vietnamese", 
+        "Bengali", "Portuguese", "Urdu", "Vietnamese",
         "Japanese", "Russian", "German", "Italian"
     ]
 for i in range(len(languages)):

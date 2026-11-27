@@ -1,4 +1,6 @@
+
 import { useState, Fragment } from "react";
+
 function CreateProfile({ onSave }){
     /*part 1 is creation screen
     part 2 is availability selection screen
@@ -9,6 +11,7 @@ function CreateProfile({ onSave }){
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [email, setEmail] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const days = [
         "Monday", "Tuesday", "Wednesday","Thursday",
@@ -25,14 +28,13 @@ function CreateProfile({ onSave }){
             setSelectedSlots(selectedSlots.filter(item => item !== slot));
         }
         else{
-           setSelectedSlots([...selectedSlots, slot]); 
+           setSelectedSlots([...selectedSlots, slot]);
         }
     }
 
-
     const interests = [
         "Tennis", "Basketball", "Film", "Music",
-        "Soccer", "Dance", "Fitness", "Travel", 
+        "Soccer", "Dance", "Fitness", "Travel",
         "Cooking", "Books", "Anime", "Art",
         "Technology", "Hiking", "Traveling",
         "Cycling", "Yoga", "Running", "Fishing",
@@ -45,12 +47,16 @@ function CreateProfile({ onSave }){
             setSelectedInterests(selectedInterests.filter(item => item !== interest));
         }
         else{
-           setSelectedInterests([...selectedInterests, interest]); 
+           setSelectedInterests([...selectedInterests, interest]);
         }
     }
 
     async function saveProfile() {
+        if (saving) return;
+
+        setSaving(true);
         let userid;
+
         try{
             const response = await fetch("http://localhost:8000/users",{
                 method: "POST",
@@ -60,17 +66,30 @@ function CreateProfile({ onSave }){
                     email: email,
                     name: name,
                     age: Number(age),
-                    selectedInterests: selectedInterests
+                    selectedInterests: selectedInterests,
+                    password: password
                 })
             });
+
             if (!response.ok){
-                throw new Error("Failed to create profile");
+                if (response.status === 409) {
+                    throw new Error("Username or email already exists.");
+                }
+
+                if (response.status === 422) {
+                    throw new Error("Please check your profile information and password.");
+                }
+
+                throw new Error("Failed to create profile.");
             }
+
             const data = await response.json();
             userid = data.userid;
+
         } catch (error){
             console.error("Failed to create profile", error);
-            alert("Failed to create profile. Try again");
+            alert(error.message);
+            setSaving(false);
             return;
         }
 
@@ -86,15 +105,18 @@ function CreateProfile({ onSave }){
                         })
                     })
                 });
+
                 if(!availabilityResponse.ok){
                     throw new Error("Failed to save availability");
                 }
+
             } catch (error){
                 console.error("Failed to save availability", error);
                 alert("Profile successfully created. Failed to save availability");
             }
         }
 
+        setSaving(false);
         onSave(userid);
     }
 
@@ -109,18 +131,22 @@ function CreateProfile({ onSave }){
                     placeholder="USERNAME"
                     value={username}
                     onChange={(e) =>{setUsername(e.target.value)}}
+                    autoComplete="username"
                     required
                 />
                 <input type="email"
                     placeholder="EMAIL"
                     value={email}
                     onChange={(e) =>{setEmail(e.target.value)}}
+                    autoComplete="email"
                     required
                 />
                 <input type="password"
-                    placeholder="PASSWORD"
+                    placeholder="PASSWORD (MINIMUM 8 CHARACTERS)"
                     value={password}
                     onChange={(e) =>{setPassword(e.target.value)}}
+                    autoComplete="new-password"
+                    minLength={8}
                     required
                 />
                 <input type="text"
@@ -186,14 +212,17 @@ function CreateProfile({ onSave }){
                 ))}
             </div>
             <div className="interestsNav">
-                <button onClick={() => setPart(2)}>BACK</button>
+                <button type="button" onClick={() => setPart(2)}>BACK</button>
                 <button type="button"
                     onClick={saveProfile}
-                    disabled={selectedInterests.length === 0}
-                >SAVE</button>
+                    disabled={selectedInterests.length === 0 || saving}
+                >
+                    {saving ? "SAVING..." : "SAVE"}
+                </button>
             </div>
         </div>
     )}
     </div>)
 }
+
 export default CreateProfile;

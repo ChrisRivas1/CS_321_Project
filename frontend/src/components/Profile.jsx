@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import EditProfile from "./EditProfile"
+import ProfileAssistant from "./ProfileAssistant";
 
 function Profile({ userid }){
     const [profile, setProfile] = useState(null);
@@ -76,6 +77,7 @@ function Profile({ userid }){
         <div className="card">
         <div className='profileEditButtons'>
             <button className="editProfileButton" onClick={() => setEditing(true)}>Edit Profile</button>
+            <ProfileAssistant userid={userid} />
         </div>
         <div className="profilePicture">👤</div>
         <h2>{profile.name}, {profile.age}</h2>
