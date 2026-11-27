@@ -185,6 +185,16 @@ def update_bio(userid, bio):
 ''' User Matching Methods '''
 
 
+def fetch_interests(cursor, userid):
+    cursor.execute("""
+        SELECT i.interestname
+        FROM user_interests ui
+        JOIN interests i
+            ON ui.interestid = i.interestid
+        WHERE ui.userid = ?
+    """, (userid,))
+    return [row[0] for row in cursor.fetchall()]
+
 def get_candidates(userid):
     connection = get_connection()
     cursor = connection.cursor()
@@ -198,23 +208,16 @@ def get_candidates(userid):
         ORDER BY userid
     """, (userid, userid))
     rows = cursor.fetchall()
-    candidates = []
-    for row in rows:
-        cursor.execute("""
-            SELECT i.interestname
-            FROM user_interests ui
-            JOIN interests i
-                ON ui.interestid = i.interestid
-            WHERE ui.userid = ?
-        """, (row[0],))
-        interests = [r[0] for r in cursor.fetchall()]
-        candidates.append({
+    candidates = [
+        {
             "userid": row[0],
             "name": row[1],
             "age": row[2],
             "bio": row[3],
-            "interests": interests
-        })
+            "interests": fetch_interests(cursor, row[0])
+        }
+        for row in rows
+    ]
     connection.close()
     return candidates
 
@@ -245,3 +248,31 @@ def record_swipe(swiperid, swipeeid, liked):
     connection.commit()
     connection.close()
     return matched
+
+def get_matches(userid):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT u.userid, u.name, u.age, u.bio
+        FROM matches m
+        JOIN users u
+            ON u.userid = CASE
+                WHEN m.user1id = ? THEN m.user2id
+                ELSE m.user1id
+            END
+        WHERE m.user1id = ? OR m.user2id = ?
+        ORDER BY m.matchid DESC
+    """, (userid, userid, userid))
+    rows = cursor.fetchall()
+    matches = [
+        {
+            "userid": row[0],
+            "name": row[1],
+            "age": row[2],
+            "bio": row[3],
+            "interests": fetch_interests(cursor, row[0])
+        }
+        for row in rows
+    ]
+    connection.close()
+    return matches

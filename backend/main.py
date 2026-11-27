@@ -118,6 +118,10 @@ def post_swipe(userid: int, swipe: Swipe):
     matched = record_swipe(userid, swipe.swipeeid, swipe.liked)
     return {"matched": matched}
 
+@app.get("/users/{userid}/matches")
+def read_matches(userid: int):
+    return {"matches": get_matches(userid)}
+
 @app.get("/")
 def home():
     return {"message": "Backend is running"}

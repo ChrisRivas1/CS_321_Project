@@ -431,3 +431,75 @@ body{
   font-size: 14px;
   opacity: 0.6;
 }
+
+/* Match.jsx */
+
+.matchScreen{
+  padding: 30px;
+  box-sizing: border-box;
+  background: #1e2236;
+}
+
+.matchButtons{
+  display: flex;
+  gap: 30px;
+  margin-top: 25px;
+}
+
+.matchButtons button{
+  flex: 1;
+  font-size: 22px;
+  padding: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.passButton{
+  background: #3a2230;
+}
+
+.passButton:hover{
+  background-color: #4a2a3c;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.likeButton{
+  background: #223a2f;
+}
+
+.likeButton:hover{
+  background-color: #2a4a3c;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.matchesScreen{
+  padding: 30px;
+  box-sizing: border-box;
+  background: #1e2236;
+}
+
+.matchesList{
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.matchCard{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  background: #1a1e2f;
+}
+
+.matchCard .profilePicture{
+  font-size: 60px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}

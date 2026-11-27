@@ -7,6 +7,7 @@ import Messages from './components/Messages'
 import CreateProfile from './components/CreateProfile';
 import SignIn from './components/SignIn';
 import Events from './components/Events';
+import Explore from './components/Explore';
 
 
 
@@ -19,7 +20,8 @@ function App() {
   }
 
   const tabs = [
-    { id: 'match',  icon: '👥', label: 'Match' },
+    { id: 'explore',  icon: '🔍', label: 'Explore' },
+    { id: 'match',  icon: '👥', label: 'Matches' },
     { id: 'events',   icon: '🎉', label: 'Events' },
     { id: 'messages', icon: '💬', label: 'Messages' },
     { id: 'profile',  icon: '👤', label: 'Profile' }
@@ -44,7 +46,8 @@ function App() {
           ))}
         </div>
         <div className='selectedContent'>
-          {tab === 'match' && <Match />}
+          {tab === 'explore' && <Explore userid={userid} />}
+          {tab === 'match' && <Match userid={userid} />}  
           {tab === 'events' && <Events />}
           {tab === 'messages' && <Messages />}
           {tab === 'profile' && <Profile userid={userid}/>}
