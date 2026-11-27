@@ -1,25 +1,99 @@
+
 import sqlite3
+import hashlib
+import hmac
+import secrets
 from pathlib import Path
 
 db_path = Path(__file__).with_name("matching.db")
+
+# Password hashing configuration
+PASSWORD_ITERATIONS = 600000
+PASSWORD_ALGORITHM = "sha256"
+
+
+def hash_password(password):
+    """
+    Hash a password using PBKDF2-SHA256 with a unique random salt.
+    Passwords are never stored in plaintext.
+    """
+    if not isinstance(password, str) or len(password) < 8:
+        raise ValueError("Password must contain at least 8 characters")
+
+    salt = secrets.token_bytes(16)
+
+    password_hash = hashlib.pbkdf2_hmac(
+        PASSWORD_ALGORITHM,
+        password.encode("utf-8"),
+        salt,
+        PASSWORD_ITERATIONS
+    )
+
+    return (
+        f"pbkdf2_sha256${PASSWORD_ITERATIONS}$"
+        f"{salt.hex()}${password_hash.hex()}"
+    )
+
+
+def verify_password(password, stored_hash):
+    """
+    Verify a password against its stored hash.
+    Also returns False for legacy accounts without a password.
+    """
+    if not isinstance(password, str) or not stored_hash:
+        return False
+
+    try:
+        algorithm, iterations, salt_hex, hash_hex = stored_hash.split("$")
+
+        if algorithm != "pbkdf2_sha256":
+            return False
+
+        iterations = int(iterations)
+
+        if iterations < 100000 or iterations > 2000000:
+            return False
+
+        salt = bytes.fromhex(salt_hex)
+        expected_hash = bytes.fromhex(hash_hex)
+
+        calculated_hash = hashlib.pbkdf2_hmac(
+            PASSWORD_ALGORITHM,
+            password.encode("utf-8"),
+            salt,
+            iterations
+        )
+
+        return hmac.compare_digest(calculated_hash, expected_hash)
+
+    except (ValueError, TypeError, AttributeError):
+        return False
+
 
 def get_connection():
     connection = sqlite3.connect(db_path)
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
 
-def create_user(username, email, name, age, selectedInterests):
+
+def create_user(username, email, name, age, selectedInterests, password):
+    password_hash = hash_password(password)
+
     connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
-    INSERT INTO users (username, email, name, age)
-        VALUES(?, ?, ?, ?)
-    """, (username, email, name, age))
-    connection.commit()
-    userid = cursor.lastrowid
-    connection.close()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+        INSERT INTO users (username, email, name, age, password_hash)
+            VALUES(?, ?, ?, ?, ?)
+        """, (username, email, name, age, password_hash))
+        connection.commit()
+        userid = cursor.lastrowid
+    finally:
+        connection.close()
+
     select_interests(userid, selectedInterests)
     return userid
+
 
 def select_interests(userid, selectedInterests):
     connection = get_connection()
@@ -34,6 +108,7 @@ def select_interests(userid, selectedInterests):
         """, (userid, interest))
     connection.commit()
     connection.close()
+
 
 def get_user_info(userid):
     connection = get_connection()
@@ -67,22 +142,35 @@ def get_user_info(userid):
     }
     return info
 
-def get_user_id_sign_in(input: str):
+
+def get_user_id_sign_in(input: str, password: str):
+    """
+    Authenticate using username/email and password.
+    Never allow login based on username alone.
+    """
     connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
-        SELECT userid
-        FROM users
-        WHERE username = ?
-        OR email = ?
-    """, (input, input))
-    user = cursor.fetchone()
-    if user is None:
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT userid, password_hash
+            FROM users
+            WHERE username = ?
+            OR email = ?
+        """, (input, input))
+        user = cursor.fetchone()
+    finally:
         connection.close()
+
+    if user is None:
         return None
-    userid = user[0]
-    connection.close()
+
+    userid, stored_hash = user
+
+    if not verify_password(password, stored_hash):
+        return None
+
     return userid
+
 
 def get_user_relationship_preferences(userid):
     connection = get_connection()
@@ -98,6 +186,7 @@ def get_user_relationship_preferences(userid):
     connection.close()
     return preferences
 
+
 def get_user_language_preferences(userid):
     connection = get_connection()
     cursor = connection.cursor()
@@ -111,6 +200,7 @@ def get_user_language_preferences(userid):
     preferences = [row[0] for row in cursor.fetchall()]
     connection.close()
     return preferences
+
 
 def select_relationship_preferences(userid, preferences):
     connection = get_connection()
@@ -126,6 +216,7 @@ def select_relationship_preferences(userid, preferences):
     connection.commit()
     connection.close()
 
+
 def select_language_preferences(userid, preferences):
     connection = get_connection()
     cursor = connection.cursor()
@@ -139,6 +230,7 @@ def select_language_preferences(userid, preferences):
         """, (userid, preference))
     connection.commit()
     connection.close()
+
 
 def select_availability(userid, slots):
     connection = get_connection()
@@ -155,6 +247,7 @@ def select_availability(userid, slots):
     connection.commit()
     connection.close()
 
+
 def get_user_availability(userid):
     connection = get_connection()
     cursor = connection.cursor()
@@ -169,6 +262,7 @@ def get_user_availability(userid):
     availability = [{"day": row[0], "period": row[1]} for row in cursor.fetchall()]
     connection.close()
     return availability
+
 
 def update_bio(userid, bio):
     connection = get_connection()
@@ -195,6 +289,7 @@ def fetch_interests(cursor, userid):
     """, (userid,))
     return [row[0] for row in cursor.fetchall()]
 
+
 def get_candidates(userid):
     connection = get_connection()
     cursor = connection.cursor()
@@ -220,6 +315,7 @@ def get_candidates(userid):
     ]
     connection.close()
     return candidates
+
 
 def record_swipe(swiperid, swipeeid, liked):
     connection = get_connection()
@@ -248,6 +344,7 @@ def record_swipe(swiperid, swipeeid, liked):
     connection.commit()
     connection.close()
     return matched
+
 
 def get_matches(userid):
     connection = get_connection()
