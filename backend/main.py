@@ -4,8 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from users import *
+from ai_assistant import router as ai_assistant_router
 
 app = FastAPI()
+app.include_router(ai_assistant_router)
 
 origins = [
     "http://localhost:5173"
